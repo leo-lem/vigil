@@ -3,7 +3,7 @@ from __future__ import annotations
 from requests import post
 
 from core import Backend
-from studies.whisper.lib.tunnel_ssh import tunnel_ssh
+from lib.tunnel_ssh import tunnel_ssh
 
 
 class SshWhisper(Backend):

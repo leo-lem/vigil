@@ -7,7 +7,7 @@ from inspect import Parameter, signature
 from json import loads
 from os import environ
 from pathlib import Path
-from sys import argv, modules, stderr, stdin, executable, stdout
+from sys import argv, modules, stderr, stdin, executable, stdout, path as sys_path
 from traceback import print_exc
 
 from .backend import Backend
@@ -113,7 +113,13 @@ def load_backend(project_dir: Path) -> tuple[Backend, Path]:
 
     mod = module_from_spec(spec)
     modules[spec.name] = mod
-    spec.loader.exec_module(mod)
+
+    sys_path.insert(0, str(project_dir))
+    try:
+        spec.loader.exec_module(mod)
+    finally:
+        if sys_path and sys_path[0] == str(project_dir):
+            sys_path.pop(0)
 
     subclasses = [
         v for v in vars(mod).values()
@@ -220,13 +226,25 @@ def start():
     if not project_dir.is_dir():
         raise SystemExit(f"not a directory: {project_dir}")
 
-    backend, backend_file = load_backend(project_dir)
-    engine = Engine(backend)
-    report = None
+    try:
+        backend, backend_file = load_backend(project_dir)
+        engine = Engine(backend)
+        report = None
 
-    specs = find_specs(project_dir)
-    if not specs:
-        raise SystemExit("no spec files found")
+        specs = find_specs(project_dir)
+        if not specs:
+            raise SystemExit("no spec files found")
+    except ModuleNotFoundError as e:
+        print(
+            f"error: No module named '{getattr(e, 'name', None) or str(e)}'")
+        if not install_requirements(project_dir):
+            return
+    except Exception as e:
+        if "--trace" in flags:
+            print_exc()
+        else:
+            print(f"error: {e}")
+        return
 
     print(f"project: {project_dir}")
     print(f"backend: {backend.name} ({backend_file.name})")

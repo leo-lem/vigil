@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vigil-bv"
-version = "0.1.0"
+version = "0.1.1"
 description = "Behavioural verification of evolving systems under controlled variation."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -34,3 +34,9 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["test"]
+
+[project.urls]
+Homepage = "https://leolem.dev/portfolio/vigil"
+Repository = "https://github.com/leo-lem/vigil"
+Issues = "https://github.com/leo-lem/vigil/issues"
+Changelog = "https://github.com/leo-lem/vigil/releases"
