@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from core import Backend
-from studies.llm.lib.dats_client import DatsClient
+from lib.dats_client import DatsClient
 
 
 class DatsLlm(Backend):
