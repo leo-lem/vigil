@@ -1,0 +1,24 @@
+hypothesis: Swapping spaCy English models while keeping the pipeline fixed does not introduce substantial semantic changes in named-entity predictions.
+
+inputs:
+  - text: >
+      The report was finalized last spring, shortly after the merger talks collapsed,
+      though no exact date was ever made public.
+
+  - text: >
+      Revenue increased by just over seven percent year over year, depending on how
+      operating costs and deferred expenses were accounted for.
+
+  - text: >
+      Between late 2021 and early 2022, the system handled thousands of users before
+      performance issues gradually became noticeable.
+
+variations:
+  - type: set_function
+    model: en_core_web_md
+  - type: set_function
+    model: en_core_web_lg
+  - type: set_function
+    model: en_core_web_trf
+
+checks: entity_types_agree

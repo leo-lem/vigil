@@ -1,0 +1,23 @@
+hypothesis: Moderate noise perturbations do not materially alter transcription behaviour.
+
+inputs:
+  - studies/whisper/data/ls_reading.wav
+  - studies/whisper/data/ami_meeting.wav
+  - studies/whisper/data/eu_speech.wav
+
+variations:
+  - type: transform_audio
+    snr_db: 20.0
+    seed: 7
+  - type: transform_audio
+    snr_db: 10.0
+    seed: 7
+  - type: transform_audio
+    snr_db: 5.0
+    seed: 7
+  
+
+checks:
+  - type: wer_is_under
+    threshold: 0.05
+  - summary

@@ -1,0 +1,21 @@
+hypothesis: Language routing does not affect sentence-level annotation outcomes for multilingual documents.
+
+inputs:
+  - text: |
+      This product works very well and I am happy with the result.
+      Das Produkt funktioniert sehr gut und ich bin zufrieden mit dem Ergebnis.
+
+      However, the setup process was confusing and poorly documented.
+      Allerdings war der Einrichtungsprozess verwirrend und schlecht dokumentiert.
+
+      Overall, the experience is acceptable but not outstanding.
+      Insgesamt ist die Erfahrung akzeptabel, aber nicht herausragend.
+
+variations:
+  - type: update_input_keys
+    input:
+      language: de
+
+checks: 
+  - summary
+  - matches_baseline

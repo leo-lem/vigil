@@ -1,0 +1,16 @@
+hypothesis: Named-entity predictions produced by spaCy's transformer-based English model are stable across repeated executions on identical inputs.
+
+inputs:
+  - text: During the early hours of the morning, the logistics team reported that several delayed shipments had finally arrived at the distribution center, allowing operations to resume after nearly twelve hours of disruption.
+  - text: In its quarterly report released on September 30, 2022, the company stated that revenue had increased by 7.4 percent year over year, despite rising energy costs and ongoing supply chain constraints in multiple regions.
+  - text: While the software was originally intended to support a limited number of concurrent users, unexpected growth, combined with inconsistent network conditions and legacy configuration files, exposed a series of subtle performance and stability issues.
+
+variations:
+  - type: repeat
+    times: 50
+    do:
+      - 
+
+checks:
+  - entity_types_agree
+  - matches_baseline

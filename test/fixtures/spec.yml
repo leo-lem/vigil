@@ -1,0 +1,14 @@
+hypothesis: The model responds differently to different inputs.
+
+inputs:
+  - "a"
+  - "b"
+  - "expected"
+  - "tolerance"
+
+variations:
+  -
+
+checks:
+  - summary
+  - matches_baseline

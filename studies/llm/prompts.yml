@@ -1,0 +1,77 @@
+hypothesis: Annotation behaviour remains stable under semantically similar, instruction-level prompt perturbations.
+
+inputs:
+  - text: |
+      This product works very well and I am happy with the result.
+      Das Produkt funktioniert sehr gut und ich bin zufrieden mit dem Ergebnis.
+
+      However, the setup process was confusing and poorly documented.
+      Allerdings war der Einrichtungsprozess verwirrend und schlecht dokumentiert.
+
+      Overall, the experience is acceptable but not outstanding.
+      Insgesamt ist die Erfahrung akzeptabel, aber nicht herausragend.
+
+variations:
+  - type: set_function
+    label: "Prompt variant 1: stricter wording"
+    specific_approach_parameters:
+      prompts:
+        - language: en
+          system_prompt: "Answer only in the requested format."
+          user_prompt: |
+            Categories: Positive, Negative, Neutral
+            Output format:
+            Sentence ID: <sentence number>
+            Category: <category>
+
+            Classify only sentences that clearly express sentiment.
+
+            Document:
+            <document>
+        - language: de
+          system_prompt: "Antworte nur im geforderten Format."
+          user_prompt: |
+            Kategorien: Positive, Negative, Neutral
+            Ausgabeformat:
+            Satz ID: <Satz Nummer>
+            Kategorie: <Kategorie>
+
+            Vergebe nur dann eine Kategorie, wenn klar ein Sentiment vorliegt.
+
+            Dokument:
+            <document>
+
+  - type: set_function
+    label: "Prompt variant 2: permissive wording"
+    specific_approach_parameters:
+      prompts:
+        - language: en
+          system_prompt: "Follow the format."
+          user_prompt: |
+            Categories: Positive, Negative, Neutral
+            Output format:
+            Sentence ID: <sentence number>
+            Category: <category>
+
+            Assign a category whenever it could plausibly apply.
+
+            Document:
+            <document>
+        - language: de
+          system_prompt: "Format einhalten."
+          user_prompt: |
+            Kategorien: Positive, Negative, Neutral
+            Ausgabeformat:
+            Satz ID: <Satz Nummer>
+            Kategorie: <Kategorie>
+
+            Vergib eine Kategorie, wenn sie plausibel erscheint.
+
+            Dokument:
+            <document>
+
+checks:
+  - annotation_counts_equal
+  - coverage_is_stable
+  - labels_agree
+  - summary
