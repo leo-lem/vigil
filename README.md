@@ -1,5 +1,7 @@
 # Vigil
 
+[PyPi](https://pypi.org/project/vigil-bv/) <!-- TODO: add badge -->
+
 Vigil is a small framework for **behavioural verification under controlled variation**.
 
 It executes a system across declared variations, evaluates the resulting behaviour with checks, and records everything in a single structured report.  
