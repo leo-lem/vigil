@@ -7,7 +7,7 @@ name = "vigil-bv"
 version = "0.1.0"
 description = "Behavioural verification of evolving systems under controlled variation."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = { file = "LICENSE" }
 authors = [
   { name = "Leopold Lemmermann" }
