@@ -34,3 +34,9 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["test"]
+
+[project.urls]
+Homepage = "https://leolem.dev/portfolio/vigil"
+Repository = "https://github.com/leo-lem/vigil"
+Issues = "https://github.com/leo-lem/vigil/issues"
+Changelog = "https://github.com/leo-lem/vigil/releases"
