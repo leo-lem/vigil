@@ -1,6 +1,8 @@
 # Vigil
 
-[PyPi](https://pypi.org/project/vigil-bv/) <!-- TODO: add badge -->
+[![PyPi](https://img.shields.io/pypi/v/vigil-bv)](https://pypi.org/project/vigil-bv/)
+[![CI](https://github.com/leo-lem/vigil/actions/workflows/ci.yml/badge.svg)](https://github.com/leo-lem/vigil/actions/workflows/ci.yml)
+
 
 Vigil is a small framework for **behavioural verification under controlled variation**.
 
