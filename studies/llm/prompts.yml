@@ -71,7 +71,7 @@ variations:
             <document>
 
 checks:
-  - annotation_counts_equal
   - coverage_is_stable
-  - labels_agree
+  - type: labels_agree
+    scope: intersection
   - summary

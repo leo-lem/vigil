@@ -1,33 +1,34 @@
 # Prompt Phrasing Sensitivity
 
-Annotation behaviour changes under semantically similar but instruction-level prompt perturbations.
+Annotation behaviour changes under instruction-level prompt perturbations, even when coverage remains stable.
 
 ## Setup
 
-- One document with mixed sentiment signals
-- Three slices:
-  - baseline: server-generated prompts
-  - variant 1: stricter wording
-  - variant 2: permissive wording
+- One document with mixed sentiment signals (English and German segments)
+- Two prompt variants (function variation):
+  - variant 1: stricter wording (“classify only sentences that clearly express sentiment”)
+  - variant 2: permissive wording (“assign a category whenever it could plausibly apply”)
 
 ## Observed Behaviour
 
-The hypothesis is **supported** in a structured way.
+The hypothesis is **not supported** as stated (“behaviour remains stable”).  
+Instead, the run shows **label-set drift under prompt variation** while coverage remains stable.
 
-- Stricter prompts:
-  - same coverage and labels as baseline
-- Permissive prompts:
-  - increased annotation count
-  - expanded sentence coverage
-  - labels match baseline on overlapping coverage
+- Coverage remained stable across variants:
+  - both variants annotated the same sentence ids (2 total)
+- Label assignments changed under permissive wording:
+  - one sentence received an expanded label set (`{Negative, Positive}`) under the permissive prompt
+  - the stricter prompt assigned only `{Positive}` for that sentence
+- The permissive variant also produced additional / duplicated annotation entries for the same sentence id, which collapses to a larger label set at the check level.
 
 ## Checks
 
-- `AnnotationCountsEqual`: **fail**
-- `CoverageIsStable`: **fail**
-- `LabelsMatch`: **pass**
-- `DiffBaseline`: shows added annotation entries
+- `CoverageIsStable`: **pass**
+- `LabelsAgree`: **fail**
+  - 1 / 2 sentences disagree (agreement ratio 0.5)
+  - disagreement driven by multi-label expansion under permissive wording
+- `Summary`: includes the exact prompt variants and raw suggested annotations
 
 ## Conclusion
 
-Prompt wording primarily affects annotation scope, not label assignment on shared coverage.
+Instruction-level prompt phrasing can change annotation behaviour even when sentence coverage is unchanged. In this run, permissive wording increased label ambiguity (multi-label assignments) rather than expanding coverage.

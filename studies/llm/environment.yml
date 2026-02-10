@@ -1,0 +1,35 @@
+hypothesis: Sentence-level annotation behaviour may change when project-level code descriptions (environment configuration) are varied while inputs and function remain fixed.
+
+inputs:
+  - text: |
+      The product is fine, but nothing about it feels special.
+      I like the design, yet the performance is disappointing.
+      Support was quick, although the answer did not actually solve the issue.
+      It works as advertised, but I would not recommend it to friends.
+
+variations:
+  - type: set_environment
+    label: "Env A: neutral code semantics"
+    project_name: "Vigil LLM Env Codes"
+    project_variant: "neutral"
+    recreate_project: true
+    code_descriptions:
+      Positive: "Use when the sentence clearly expresses positive sentiment or approval."
+      Negative: "Use when the sentence clearly expresses negative sentiment or disapproval."
+      Neutral: "Use when the sentence is mixed, factual, or does not clearly express sentiment."
+
+  - type: set_environment
+    label: "Env B: biased code semantics"
+    project_name: "Vigil LLM Env Codes"
+    project_variant: "biased"
+    recreate_project: true
+    code_descriptions:
+      Positive: "Prefer Positive whenever any positive element is present, even if the sentence also contains criticism."
+      Negative: "Use Negative only for strongly negative language; avoid if there is any balancing positive aspect."
+      Neutral: "Avoid Neutral unless sentiment is genuinely absent; prefer Positive or Negative if plausible."
+
+checks:
+  - annotated_sentence_overlaps
+  - type: labels_agree
+    scope: intersection 
+  - summary

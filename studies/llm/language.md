@@ -1,31 +1,28 @@
 # Language Routing Sensitivity
 
-Annotation behaviour is invariant when the same multilingual document is routed under different language contexts.
+Annotation behaviour changes when the same multilingual document is routed under different language contexts.
 
 ## Setup
 
 - One multilingual document containing aligned English and German sentences
 - Two slices:
-  - baseline: no language specified
+  - baseline: default routing (no explicit language)
   - variant: `language = de`
 
 ## Observed Behaviour
 
 The hypothesis is **not supported**.
 
-- Both slices annotate the same sentence
-- The assigned label differs:
-  - baseline: `Positive`
-  - `language = de`: `Neutral`
+- The variant (`language = de`) produced an additional annotation compared to baseline.
+- The diff indicates an extra sentence-level annotation entry (sentence id 1) labelled `Neutral`.
 
-Coverage is identical, but label assignment changes under language routing.
+This suggests language routing can influence which sentences are annotated, even when document content is multilingual and semantically aligned.
 
 ## Checks
 
 - `MatchesBaseline`: **fail**
-- `DiffBaseline`: shows label substitution for sentence 0
-- `Summary`: confirms no other behavioural differences
+- `Summary`: provides the raw outputs for inspection
 
 ## Conclusion
 
-Language routing affects annotation behaviour even when document content is multilingual and semantically aligned.
+Language routing can affect annotation behaviour for multilingual inputs. In this run, the change manifested as a difference in produced annotations (coverage/decisiveness), rather than a simple label substitution.

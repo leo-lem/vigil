@@ -40,10 +40,7 @@ class DatsClient:
             return self.request(method, path, **kwargs)
         elif r.status_code == 404:
             return None
-        elif r.status_code >= 400:
-            print(f"{r.status_code}: {r.text}")
-        else:
-            r.raise_for_status()
+        r.raise_for_status()
 
         return {} if not r.content else r.json()
 
@@ -141,41 +138,74 @@ class DatsClient:
 
         return sdoc_id
 
-    def ensure_metadata(self, proj_id: int, keys: list[str]) -> list[int]:
-        meta_ids = []
+    def ensure_metadata(
+        self,
+        proj_id: int,
+        keys: list[str],
+        descriptions: dict[str, str] | None = None,
+        update_existing: bool = False,
+    ) -> list[int]:
+        descriptions = descriptions or {}
+        wanted = list(keys)  # do not mutate caller list
+        meta_ids: list[int] = []
 
-        for meta in self.get(f"/projmeta/project/{proj_id}") or []:
-            if str(meta.get("key")) in keys and meta.get("id") is not None:
-                meta_ids.append(int(meta["id"]))
-                keys.remove(str(meta.get("key")))
+        existing = self.get(f"/projmeta/project/{proj_id}") or []
+        by_key = {str(m.get("key"))                  : m for m in existing if m.get("id") is not None}
 
-        for key in keys:
-            meta_ids.append(int(self.put("/projmeta", json={
-                "key": key,
-                "metatype": "STRING",
-                "doctype": "text",
-                "description": "vigil seed metadata",
-                "project_id": proj_id,
-                "read_only": False,
-            })["id"]))
+        for key in wanted:
+            if key in by_key:
+                m = by_key[key]
+                meta_ids.append(int(m["id"]))
+
+                if update_existing:
+                    desired_desc = descriptions.get(key)
+                    if desired_desc is not None and str(m.get("description")) != desired_desc:
+                        self.patch(
+                            f"/projmeta/{m['id']}", json={"description": desired_desc})
+            else:
+                meta_ids.append(int(self.put("/projmeta", json={
+                    "key": key,
+                    "metatype": "STRING",
+                    "doctype": "text",
+                    "description": descriptions.get(key, "vigil seed metadata"),
+                    "project_id": proj_id,
+                    "read_only": False,
+                })["id"]))
 
         return meta_ids
 
-    def ensure_codes(self, proj_id: int, codes: list[str]) -> list[int]:
-        code_ids = []
+    def ensure_codes(
+        self,
+        proj_id: int,
+        codes: list[str],
+        descriptions: dict[str, str] | None = None,
+        update_existing: bool = False,
+    ) -> list[int]:
+        descriptions = descriptions or {}
+        wanted = list(codes)
+        code_ids: list[int] = []
 
-        for code in self.get(f"/code/project/{proj_id}") or []:
-            if str(code.get("name")) in codes and code.get("id") is not None:
-                code_ids.append(int(code["id"]))
-                codes.remove(str(code.get("name")))
+        existing = self.get(f"/code/project/{proj_id}") or []
+        by_name = {str(c.get("name"))
+                       : c for c in existing if c.get("id") is not None}
 
-        for code in codes:
-            code_ids.append(int(self.put("/code", json={
-                "project_id": proj_id,
-                "name": code,
-                "description": "vigil seed code",
-                "is_system": False}
-            )["id"]))
+        for name in wanted:
+            if name in by_name:
+                c = by_name[name]
+                code_ids.append(int(c["id"]))
+
+                if update_existing:
+                    desired_desc = descriptions.get(name)
+                    if desired_desc is not None and str(c.get("description")) != desired_desc:
+                        self.patch(f"/code/{c['id']}",
+                                   json={"description": desired_desc})
+            else:
+                code_ids.append(int(self.put("/code", json={
+                    "project_id": proj_id,
+                    "name": name,
+                    "description": descriptions.get(name, "vigil seed code"),
+                    "is_system": False,
+                })["id"]))
 
         return code_ids
 

@@ -65,9 +65,8 @@ inputs:
   - text: "Hello world"
 
 variations:
-  - type: update_input_keys
-    input:
-      language: de
+  - type: set_input
+    language: de
 
 checks:
   - matches_baseline

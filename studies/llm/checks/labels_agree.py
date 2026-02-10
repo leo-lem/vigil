@@ -1,17 +1,19 @@
 from __future__ import annotations
 
 from collections import Counter, defaultdict
-from typing import Any
+from typing import Any, Literal
 
 from core import GroupCheck, Slice
 
 
 class LabelsAgree(GroupCheck):
     """
-    Assert that label assignments per sentence are consistent across all slices.
+    Assert that label assignments per sentence are consistent across slices.
 
-    For each sentence id, all slices must assign exactly the same set of labels.
-    Any disagreement constitutes a failing outcome.
+    By default, evaluates the union of sentence ids across slices and treats missing
+    annotations as the empty label set (∅). For cases where abstention is expected
+    (e.g. LLM instructions allowing skipping), use scope="intersection" to evaluate
+    only sentences that are annotated in all slices.
     """
 
     def __init__(
@@ -22,26 +24,47 @@ class LabelsAgree(GroupCheck):
         max_disagreements: int = 50,
         max_pairs: int = 50,
         include_pairwise: bool = False,
+        scope: Literal["union", "intersection"] = "union",
     ):
         self.warn_below = float(warn_below)
         self.error_below = float(error_below)
         self.max_disagreements = int(max_disagreements)
         self.max_pairs = int(max_pairs)
         self.include_pairwise = bool(include_pairwise)
+        self.scope = scope
 
     def check(self, slices: list[Slice]) -> tuple[GroupCheck.Severity, dict[str, Any]]:
         per_slice = {s.id: self._labels_by_sentence(s.output) for s in slices}
 
-        sentence_ids: set[int] = set()
-        for m in per_slice.values():
-            sentence_ids.update(m.keys())
+        # Compute which sentence ids to evaluate.
+        if not per_slice:
+            return GroupCheck.Severity.INFO, {
+                "total_slices": 0,
+                "total_sentences": 0,
+                "agreement_ratio": None,
+                "note": "no slices",
+            }
+
+        keys_per_slice = {sid: set(m.keys()) for sid, m in per_slice.items()}
+
+        if self.scope == "intersection":
+            sentence_ids = None
+            for ids in keys_per_slice.values():
+                sentence_ids = ids if sentence_ids is None else sentence_ids & ids
+            sentence_ids = sentence_ids or set()
+        else:  # union
+            sentence_ids: set[int] = set()
+            for ids in keys_per_slice.values():
+                sentence_ids |= ids
 
         if not sentence_ids:
             return GroupCheck.Severity.INFO, {
                 "total_slices": len(slices),
+                "slice_ids": [s.id for s in slices],
                 "total_sentences": 0,
                 "agreement_ratio": None,
-                "note": "no sentence annotations found in any slice",
+                "note": f"no sentence annotations found in any slice for scope={self.scope}",
+                "scope": self.scope,
             }
 
         disagreements: list[dict[str, Any]] = []
@@ -52,6 +75,7 @@ class LabelsAgree(GroupCheck):
             examples: dict[str, list[str]] = defaultdict(list)
 
             for slice_id, mapping in per_slice.items():
+                # In intersection scope, sid is guaranteed to exist in mapping.
                 label_set = mapping.get(sid, frozenset())
                 key = self._fmt_label_set(label_set)
                 dist[key] += 1
@@ -91,6 +115,7 @@ class LabelsAgree(GroupCheck):
             "error_below": self.error_below,
             "disagreements": disagreements,
             "disagreements_truncated": max(0, (total_sentences - agreeing) - len(disagreements)),
+            "scope": self.scope,
         }
 
         if self.include_pairwise:
