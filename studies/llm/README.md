@@ -1,6 +1,6 @@
 # Case Study: DATS LLM Assistant API
 
-This case study applies Vigil to the DATS LLM Assistant API to examine whether annotation behaviour remains stable under controlled changes to language routing and prompt wording. The system is treated as a black box and evaluated at the pipeline level, observing only the structured job outputs returned by DATS rather than semantic correctness of individual annotations.
+This case study applies Vigil to the DATS LLM Assistant API as a remote, externally operated black box. The system is evaluated at the pipeline level by observing only the structured job outputs returned by DATS, not semantic correctness of individual annotations. The study exercises all three variation families (input, function, environment) and uses unary, reference, and group checks to surface stability and drift in the observed contract under controlled change.
 
 ## System under evaluation
 
