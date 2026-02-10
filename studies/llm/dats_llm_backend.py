@@ -46,10 +46,25 @@ class DatsLlm(Backend):
         super().__init__(environment=environment, function=function)
 
     def update_environment(self, environment: dict) -> None:
-        self.environment["project_id"] = self._client.ensure_project(
-            environment["project_name"],
-            recreate=environment["recreate_project"],
+        variant = environment.get("project_variant", "neutral")
+        proj_title = f"{environment['project_name']} [{variant}]"
+
+        proj_id = self._client.ensure_project(
+            proj_title,
+            recreate=environment.get("recreate_project", False),
         )
+        self.environment["project_id"] = proj_id
+
+        code_desc = environment.get("code_descriptions")
+        meta_desc = environment.get("metadata_descriptions")
+
+        if code_desc:
+            self._client.ensure_codes(proj_id, list(
+                code_desc.keys()), descriptions=code_desc, update_existing=True)
+
+        if meta_desc:
+            self._client.ensure_metadata(proj_id, list(
+                meta_desc.keys()), descriptions=meta_desc, update_existing=True)
 
     def compute(self, input: dict, function: dict):
         if "text" not in input:

@@ -9,7 +9,7 @@ variations:
   - type: repeat
     times: 50
     do:
-      - 
+      -
 
 checks:
   - entity_types_agree

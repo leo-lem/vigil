@@ -1,9 +1,9 @@
 hypothesis: Moderate noise perturbations do not materially alter transcription behaviour.
 
 inputs:
-  - studies/whisper/data/ls_reading.wav
-  - studies/whisper/data/ami_meeting.wav
-  - studies/whisper/data/eu_speech.wav
+  - data/ls_reading.wav
+  - data/ami_meeting.wav
+  - data/eu_speech.wav
 
 variations:
   - type: transform_audio

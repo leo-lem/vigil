@@ -1,0 +1,82 @@
+hypothesis: Sentence-level annotation behaviour remains stable under minor text input perturbations.
+
+inputs:
+  - text: |
+      The product is fine, but nothing about it feels special.
+      I like the design, yet the performance is disappointing.
+      Support was quick, although the answer did not actually solve the issue.
+      It works as advertised, but I would not recommend it to friends.
+
+  - text: |
+      Review: “Works, mostly”
+      Date: 2026-02-10
+      Order: #A19-5521
+
+      Pros:
+      - fast delivery
+      - packaging was ok
+
+      Cons:
+      - setup took forever (docs are confusing)
+      - battery life is not great
+
+      Overall: I wanted to like it, but I probably would not buy again.
+
+  - text: |
+      SUBJECT: Re: ticket 18422
+      From: customer@example.com
+
+      Hi support,
+      thanks for the quick reply. However, the suggested steps didn’t fix it.
+
+      The UI looks nice.
+      But it freezes when I click “Export”.
+      Error shown: “Unexpected token …”
+
+      Please advise.
+
+  - text: |
+      Short notes (copied from chat):
+      - “works on my machine” (not on mine)
+      - nice idea, bad execution
+      - refund was processed quickly though
+
+      Also: why is there so much whitespace in the email   sometimes?
+
+      Sent from my iPhone
+
+variations:
+  - type: perturb_whitespace
+    mode: collapse
+    seed: 1
+
+  - type: perturb_whitespace
+    mode: expand
+    intensity: 0.20
+    seed: 2
+
+  - type: perturb_linebreaks
+    mode: insert
+    intensity: 0.10
+    seed: 3
+
+  - type: inject_headline
+    seed: 4
+
+  - type: insert_junk_characters
+    count: 8
+    seed: 5
+
+  - type: add_typos
+    n_edits: 4
+    seed: 6
+
+  - type: add_boilerplate
+    n_lines: 3
+    seed: 7
+
+checks:
+  - annotated_sentence_overlaps
+  - type: labels_agree
+    scope: intersection
+  - summary

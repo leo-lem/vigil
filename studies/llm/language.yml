@@ -10,12 +10,12 @@ inputs:
 
       Overall, the experience is acceptable but not outstanding.
       Insgesamt ist die Erfahrung akzeptabel, aber nicht herausragend.
+    language: en
 
 variations:
-  - type: update_input_keys
-    input:
-      language: de
+  - type: set_input
+    language: de
 
 checks: 
-  - summary
   - matches_baseline
+  - summary

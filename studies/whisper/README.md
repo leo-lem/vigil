@@ -39,6 +39,10 @@ No linguistic interpretation or correction is performed.
 
 This study defines Whisper-specific checks in `studies/whisper/checks/`:
 
+- `RepetitionsUnder`
+  - counts repeated words in each slice transcript
+  - asserts count remains below a fixed threshold
+
 - `WerIsUnder`
   - computes pairwise word error rate between slice transcripts
   - asserts WER remains below a fixed threshold

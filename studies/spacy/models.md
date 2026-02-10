@@ -21,11 +21,11 @@ Only entity types are considered. Span boundaries and counts are ignored.
 
 ## Observed behaviour
 
-- Two inputs showed full agreement across all models
+- Two inputs showed full agreement across all variant models
 - One input exhibited model-dependent variation
 
 For the varying input:
-- `sm`, `lg`, and `trf` predicted both `DATE` and `PERCENT`
+- `lg` and `trf` predicted both `DATE` and `PERCENT`
 - `md` predicted `PERCENT` only
 
 ## Checks
