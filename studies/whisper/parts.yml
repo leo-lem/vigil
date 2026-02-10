@@ -13,6 +13,8 @@ variations:
     overlap_s: 1.0
 
 checks:
+  - type: repetitions_under
+    threshold: 0
   - type: wer_is_under
     threshold: 0.10
   - summary

@@ -22,19 +22,29 @@ The hypothesis is **not supported**.
 
 Both inputs show substantial transcript differences when changing segmentation granularity:
 
-- Read speech (`ls_reading.wav`) is affected, primarily via boundary artifacts (duplication and dropped or repeated phrases) under finer segmentation.
-- Meeting speech (`ami_meeting.wav`) is even more sensitive, with noticeably higher instability under finer segmentation, including spurious insertions and duplicated fragments.
+- Read speech (`ls_reading.wav`) is affected primarily via boundary artefacts under finer segmentation, including duplicated phrases and repeated fragments.
+- Meeting speech (`ami_meeting.wav`) is even more sensitive under finer segmentation, showing more frequent duplication, occasional spurious content, and higher overall instability.
 
 ## Checks
 
+- `RepetitionsUnderThreshold`: **fail**
+  - Threshold: `count ≤ 0`
+  - `ls_reading.wav`:
+    - Variant A: `count = 0` (pass)
+    - Variant B: `count = 2` (fail)
+  - `ami_meeting.wav`:
+    - Variant A: `count = 0` (pass)
+    - Variant B: `count = 4` (fail)
+
 - `WerIsUnder`: **fail**
   - Threshold: `WER ≤ 0.1`
-  - `ls_reading.wav`: max WER = `0.2273` (fail)
-  - `ami_meeting.wav`: max WER = `0.2890` (fail)
-- `Summary`: confirms boundary-induced artefacts in the finer segmentation output
-  - duplicated phrases and partial repetitions in `ls_reading.wav`
-  - increased fragmentation and occasional spurious content in `ami_meeting.wav`
+  - `ls_reading.wav`: `WER = 0.2273` (fail)
+  - `ami_meeting.wav`: `WER = 0.2890` (fail)
+
+- `Summary`: **info**
+  - Confirms boundary-induced artefacts in the finer segmentation output, including partial repetitions and duplicated fragments (e.g., repeated bigrams and repeated single tokens).
+  - Meeting speech additionally shows increased fragmentation and occasional off-context insertions.
 
 ## Conclusion
 
-Audio segmentation granularity is behaviourally relevant for SshWhisper under this setup. Changing `chunk_s` from 15s to 5s (with 1s overlap) produces transcript differences exceeding the specified tolerance on both clean and conversational audio.
+Audio segmentation granularity is behaviourally relevant for `SshWhisper` under this setup. Changing `chunk_s` from 15s to 5s (with 1s overlap) produces transcript differences exceeding the specified tolerance on both clean and conversational audio, and introduces measurable repetition artefacts captured by a unary repetition check.
