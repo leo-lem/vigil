@@ -5,7 +5,7 @@ from typing import Any
 from jiwer import wer
 
 from core import ReferenceCheck, Slice
-from studies.whisper.lib.norm_str import norm_str
+from lib.norm_str import norm_str
 
 
 class RefWerUnder(ReferenceCheck):

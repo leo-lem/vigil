@@ -1,1 +1,2 @@
 spacy==3.8.11
+spacy-curated-transformers==0.3.1

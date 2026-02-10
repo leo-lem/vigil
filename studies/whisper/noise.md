@@ -4,11 +4,13 @@ Transcription behaviour is invariant under controlled additive noise perturbatio
 
 ## Setup
 
-- Baseline: original audio
+- Inputs: three audio clips (read speech, meeting speech, EU speech)
 - Variants:
-  - moderate additive white noise
-  - strong additive white noise
+  - additive white noise at SNR 20 dB
+  - additive white noise at SNR 10 dB
+  - additive white noise at SNR 5 dB
 - Noise perturbations use fixed random seeds for determinism
+- Evaluation compares transcripts pairwise across the noisy variants (not against a clean baseline).
 
 ## Observed behaviour
 
@@ -24,9 +26,9 @@ The hypothesis is **not supported**.
 
 ## Checks
 
-- `RefWerIsUnder`: **fail**
-  - strong noise exceeds acceptable WER
-- `Summary`: confirms sharp transition in behaviour
+- `WerIsUnder`: **fail**
+  - At least one pairwise WER per input exceeds the 0.05 threshold
+- `Summary`: illustrates sharp behavioural shifts at lower SNRs
 
 ## Conclusion
 

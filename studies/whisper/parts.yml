@@ -1,8 +1,8 @@
 hypothesis: Varying audio segmentation granularity and overlap does not significantly affect transcription behaviour.
 
 inputs:
-  - studies/whisper/data/ls_reading.wav
-  - studies/whisper/data/ami_meeting.wav
+  - data/ls_reading.wav
+  - data/ami_meeting.wav
 
 variations:
   - type: divide_audio
